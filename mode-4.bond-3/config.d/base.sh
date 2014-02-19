@@ -6,6 +6,8 @@
 set -e
 set -x
 
+## configure module
+
 cat <<EOS | sudo tee /etc/modprobe.d/bonding.conf
 alias bond0 bonding
 alias bond1 bonding
