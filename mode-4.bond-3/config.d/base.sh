@@ -85,3 +85,7 @@ ONBOOT=yes
 MASTER=bond2
 SLAVE=yes
 EOS
+
+##
+
+sudo /etc/init.d/network restart
