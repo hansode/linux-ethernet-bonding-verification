@@ -20,18 +20,21 @@ cat <<EOS | sudo tee /etc/sysconfig/network-scripts/ifcfg-bond0
 DEVICE=bond0
 ONBOOT=yes
 BOOTPROTO=none
+BONDING_OPTS="mode=4 miimon=100 updelay=500"
 EOS
 
 cat <<EOS | sudo tee /etc/sysconfig/network-scripts/ifcfg-bond1
 DEVICE=bond1
 ONBOOT=yes
 BOOTPROTO=none
+BONDING_OPTS="mode=4 miimon=100 updelay=500"
 EOS
 
 cat <<EOS | sudo tee /etc/sysconfig/network-scripts/ifcfg-bond2
 DEVICE=bond2
 ONBOOT=yes
 BOOTPROTO=none
+BONDING_OPTS="mode=4 miimon=100 updelay=500"
 EOS
 
 ## bond0: eth1,eth2
