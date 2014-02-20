@@ -30,16 +30,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.customize ["modifyvm", :id, "--intnet7", "bond2"]
   end
 
-  config.vm.provision "shell", path: "bootstrap.sh"
-  config.vm.provision "shell", path: "config.d/base.sh"
+  config.vm.provision "shell", path: "bootstrap.sh"     # Bootstrapping: package installation (phase:1)
+  config.vm.provision "shell", path: "config.d/base.sh" # Configuration: node-common          (phase:2)
 
   config.vm.define "node01" do |node|
     node.vm.hostname = "node01"
-    node.vm.provision "shell", path: "config.d/#{node.vm.hostname}.sh"
+    node.vm.provision "shell", path: "config.d/#{node.vm.hostname}.sh" # Configuration: node-specific (phase:2.5)
   end
 
   config.vm.define "node02" do |node|
     node.vm.hostname = "node02"
-    node.vm.provision "shell", path: "config.d/#{node.vm.hostname}.sh"
+    node.vm.provision "shell", path: "config.d/#{node.vm.hostname}.sh" # Configuration: node-specific (phase:2.5)
   end
 end
