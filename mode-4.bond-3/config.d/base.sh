@@ -90,4 +90,4 @@ EOS
 
 ##
 
-sudo /etc/init.d/network restart
+# sudo /etc/init.d/network restart
