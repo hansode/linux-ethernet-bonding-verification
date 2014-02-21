@@ -20,6 +20,37 @@ Bonding Policy
 | 5 | balance-tlb   |
 | 6 | balance-alb   |
 
+Looking at the bonding configuration
+------------------------------------
+
+```
+$ watch cat /proc/net/bonding/bond0
+$ sudo tail -F /var/log/messages
+```
+
+Failover Tests
+--------------
+
+change the active slave interface:
+
+```
+$ sudo ifenslave -c bond0 eth2
+$ sudo ifenslave -c bond0 eth1
+```
+
+test the failover by detaching (-d) a "dead" interface:
+
+```
+$ sudo ifenslave -d bond0 eth1
+$ sudo ifenslave -d bond0 eth2
+```
+
+reconnect the interface:
+
+```
+$ sudo ifenslave    bond0 eth1
+$ sudo ifenslave    bond0 eth2
+```
 
 Links
 -----
