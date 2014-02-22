@@ -55,4 +55,4 @@ $ sudo ifenslave    bond0 eth2
 Links
 -----
 
-+ https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/sec-Using_Channel_Bonding.html
++ [Using Channel Bonding](https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/sec-Using_Channel_Bonding.html)
