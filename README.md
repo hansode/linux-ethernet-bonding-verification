@@ -56,3 +56,4 @@ Links
 -----
 
 + [Using Channel Bonding](https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/sec-Using_Channel_Bonding.html)
++ [GUIDE: Oracle VM VirtualBox and Oracle Linux NIC bonding](https://community.oracle.com/thread/2546040)
