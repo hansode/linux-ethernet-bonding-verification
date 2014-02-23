@@ -20,6 +20,13 @@ Bonding Policy
 | 5 | balance-tlb   |
 | 6 | balance-alb   |
 
+Show the bonding module information
+-----------------------------------
+
+```
+$ modinfo bonding
+```
+
 Looking at the bonding configuration
 ------------------------------------
 
