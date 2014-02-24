@@ -38,7 +38,7 @@ function render_ifcfg_bond_master() {
 	DEVICE=${master_if}
 	ONBOOT=yes
 	BOOTPROTO=none
-	BONDING_OPTS="mode=${mode:-1} miimon=${miimon:-100} updelay=${updelay:-500}"
+	BONDING_OPTS="mode=${mode:-1} miimon=${miimon:-100} updelay=${updelay:-500} fail_over_mac=1"
 	EOS
 }
 
