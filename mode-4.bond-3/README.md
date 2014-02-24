@@ -9,5 +9,3 @@ bond2 - eth5, eth6
 
 Links
 -----
-
-+ http://tech.g.hatena.ne.jp/rx7/20101018/p1
