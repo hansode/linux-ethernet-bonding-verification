@@ -9,7 +9,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider :virtualbox do |v, override|
    # Disable the base shared folder, guest additions are unavailable.
-   #config.vm.synced_folder ".", "/vagrant", disabled: true
+   #override.vm.synced_folder ".", "/vagrant", disabled: true
    #v.gui = true
    #v.customize ["modifyvm", :id, "--memory", "1024"]
 
@@ -31,7 +31,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provider :vmware_workstation do |v, override|
-    config.vm.synced_folder ".", "/vagrant", disabled: true
+    override.vm.synced_folder ".", "/vagrant", disabled: true
    #v.gui = true
    #v.vmx["memsize"]  = "2048"
    #v.vmx["numvcpus"] = "2"
