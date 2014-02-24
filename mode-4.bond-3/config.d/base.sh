@@ -7,8 +7,6 @@ set -e
 set -x
 
 mode=4
-miimon=100
-updelay=500
 
 ## functions
 
@@ -40,7 +38,7 @@ function render_ifcfg_bond_master() {
 	DEVICE=${master_if}
 	ONBOOT=yes
 	BOOTPROTO=none
-	BONDING_OPTS="mode=${mode} miimon=${miimon} updelay=${updelay}"
+	BONDING_OPTS="mode=${mode:-1} miimon=${miimon:-100} updelay=${updelay:-500}"
 	EOS
 }
 
