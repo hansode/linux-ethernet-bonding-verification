@@ -8,9 +8,10 @@ set -o pipefail
 set -x
 
 function append_networking_param() {
-  local device=${1:-eth0}; shift; eval local ${@}
+  local ifname=${1:-eth0}
+  shift; eval local ${@}
 
-  cat <<-EOS | tee -a /etc/sysconfig/network-scripts/ifcfg-${device}
+  cat <<-EOS | tee -a /etc/sysconfig/network-scripts/ifcfg-${ifname}
 	IPADDR=${ip}
 	NETMASK=${mask}
 	EOS
