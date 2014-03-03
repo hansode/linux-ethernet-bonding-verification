@@ -85,13 +85,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell", path: "bootstrap.sh"     # Bootstrapping: package installation (phase:1)
   config.vm.provision "shell", path: "config.d/base.sh" # Configuration: node-common          (phase:2)
 
-  config.vm.define "node01" do |node|
-    node.vm.hostname = "node01"
-    node.vm.provision "shell", path: "config.d/#{node.vm.hostname}.sh" # Configuration: node-specific (phase:2.5)
-  end
+  (1..2).each { |id|
+    name = sprintf("node%02d", id)
 
-  config.vm.define "node02" do |node|
-    node.vm.hostname = "node02"
-    node.vm.provision "shell", path: "config.d/#{node.vm.hostname}.sh" # Configuration: node-specific (phase:2.5)
-  end
+    config.vm.define "#{name}" do |node|
+      node.vm.hostname = "#{name}"
+      node.vm.provision "shell", path: "config.d/#{node.vm.hostname}.sh" # Configuration: node-specific (phase:2.5)
+    end
+  }
 end
