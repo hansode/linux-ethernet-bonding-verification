@@ -4,6 +4,7 @@
 #  bash
 #
 set -e
+set -o pipefail
 set -x
 
 function append_networking_param() {
