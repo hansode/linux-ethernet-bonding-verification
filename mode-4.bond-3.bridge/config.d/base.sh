@@ -12,14 +12,14 @@ mode=4
 ## functions
 
 function install_bonding_conf() {
-  local master_if=${1:-bond0}
+  local ifname=${1:-bond0}
 
   local bonding_conf_path=/etc/modprobe.d/bonding.conf
   if [[ ! -f ${bonding_conf_path} ]]; then
     : > ${bonding_conf_path}
   fi
 
-  local bond_entry="alias ${master_if} bonding"
+  local bond_entry="alias ${ifname} bonding"
   egrep -q -w "^${bond_entry}" ${bonding_conf_path} || {
     echo ${bond_entry} >> ${bonding_conf_path}
   }
@@ -33,10 +33,10 @@ function gen_ifcfg_path() {
 }
 
 function render_ifcfg_bond_master() {
-  local master_if=${1:-bond0}
+  local ifname=${1:-bond0}
 
   cat <<-EOS
-	DEVICE=${master_if}
+	DEVICE=${ifname}
 	ONBOOT=yes
 	BOOTPROTO=none
 	BONDING_OPTS="mode=${mode:-1} miimon=${miimon:-100} updelay=${updelay:-500} fail_over_mac=1"
@@ -44,51 +44,51 @@ function render_ifcfg_bond_master() {
 }
 
 function render_ifcfg_bond_slave() {
-  local master_if=${1:-bond0} slave_if=${2:-eth0}
+  local ifname=${1:-bond0}
+  shift; eval local "${@}"
 
   cat <<-EOS
-	DEVICE=${slave_if}
+	DEVICE=${slave}
 	BOOTPROTO=none
 	ONBOOT=yes
-	MASTER=${master_if}
+	MASTER=${ifname}
 	SLAVE=yes
 	EOS
 }
 
 function install_ifcfg_file() {
-  local device=${1:-eth0}
+  local ifname=${1:-eth0}
 
-  tee $(gen_ifcfg_path ${device}) </dev/stdin
+  tee $(gen_ifcfg_path ${ifname}) </dev/stdin
 }
 
 function install_ifcfg_bond_master() {
-  local master_if=${1:-bond0}
+  local ifname=${1:-bond0}
 
-  render_ifcfg_bond_master ${master_if} | install_ifcfg_file ${master_if}
+  render_ifcfg_bond_master ${ifname} | install_ifcfg_file ${ifname}
 }
 
 function install_ifcfg_bond_slave() {
-  local master_if=${1:-bond0} slave_if=${2:-eth0}
+  local ifname=${1:-bond0}
+  shift; eval local "${@}"
 
-  render_ifcfg_bond_slave ${master_if} ${slave_if} | install_ifcfg_file ${slave_if}
+  render_ifcfg_bond_slave ${ifname} slave=${slave} | install_ifcfg_file ${slave}
 }
 
 function install_ifcfg_bond_map() {
-  local master_if=${1:-bond0}; shift
-  local slave_ifs=${@} slave_if
+  local ifname=${1:-bond0}
+  shift; eval local "${@}"
 
-  install_bonding_conf      ${master_if}
-  install_ifcfg_bond_master ${master_if}
-  for slave_if in ${slave_ifs}; do
-    install_ifcfg_bond_slave ${master_if} ${slave_if}
-  done
+  install_bonding_conf      ${ifname}
+  install_ifcfg_bond_master ${ifname}
+  install_ifcfg_bond_slave  ${ifname} slave=${slave}
 }
 
 function render_ifcfg_bridge() {
-  local master_if=${1:-br0}
+  local ifname=${1:-br0}
 
   cat <<-EOS
-	DEVICE=${master_if}
+	DEVICE=${ifname}
 	TYPE=Bridge
 	BOOTPROTO=none
 	ONBOOT=yes
@@ -96,16 +96,17 @@ function render_ifcfg_bridge() {
 }
 
 function install_ifcfg_bridge_map() {
-  local master_if=${1:-br0} slave_if=${2:-eth0}
+  local ifname=${1:-br0}
+  shift; eval local "${@}"
 
-  render_ifcfg_bridge ${master_if} | install_ifcfg_file ${master_if}
+  render_ifcfg_bridge ${ifname} | install_ifcfg_file ${ifname}
 
-  local slave_ifcfg_path=$(gen_ifcfg_path ${slave_if})
+  local slave_ifcfg_path=$(gen_ifcfg_path ${slave})
   if [[ ! -f ${slave_ifcfg_path} ]]; then
     : > ${slave_ifcfg_path}
   fi
 
-  local bridge_entry="BRIDGE=${master_if}"
+  local bridge_entry="BRIDGE=${ifname}"
   egrep -q -w "^${bridge_entry}" ${slave_ifcfg_path} || {
     echo ${bridge_entry} >> ${slave_ifcfg_path}
   }
@@ -115,13 +116,16 @@ function install_ifcfg_bridge_map() {
 ## bond1: eth3,eth4
 ## bond2: eth5,eth6
 
-install_ifcfg_bond_map bond0 eth1 eth2
-install_ifcfg_bond_map bond1 eth3 eth4
-install_ifcfg_bond_map bond2 eth5 eth6
+install_ifcfg_bond_map bond0 slave=eth1
+install_ifcfg_bond_map bond0 slave=eth2
+install_ifcfg_bond_map bond1 slave=eth3
+install_ifcfg_bond_map bond1 slave=eth4
+install_ifcfg_bond_map bond2 slave=eth5
+install_ifcfg_bond_map bond2 slave=eth6
 
-install_ifcfg_bridge_map br0 bond0
-install_ifcfg_bridge_map br1 bond1
-install_ifcfg_bridge_map br2 bond2
+install_ifcfg_bridge_map br0 slave=bond0
+install_ifcfg_bridge_map br1 slave=bond1
+install_ifcfg_bridge_map br2 slave=bond2
 
 ##
 
