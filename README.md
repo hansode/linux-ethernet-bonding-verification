@@ -32,6 +32,7 @@ Looking at the bonding configuration
 
 ```
 $ watch cat /proc/net/bonding/bond0
+$ watch cat /sys/class/net/{bond,br}0/address
 $ sudo tail -F /var/log/messages
 ```
 
