@@ -4,6 +4,7 @@
 #  bash
 #
 set -e
+set -o pipefail
 #set -x
 
 function show_bonding_status() {

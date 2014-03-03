@@ -4,6 +4,7 @@
 #  bash
 #
 set -e
+set -o pipefail
 set -x
 
 cat <<EOS | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-bond0
