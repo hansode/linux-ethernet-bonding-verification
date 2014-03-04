@@ -82,6 +82,8 @@ $ sudo tail -F /var/log/messages
 Failover Tests
 --------------
 
+### mode=1 active-backup
+
 change the active slave interface:
 
 ```
