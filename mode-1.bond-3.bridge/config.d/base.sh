@@ -180,4 +180,5 @@ for i in {0..2}; do
 
   br_master_if=br${i}; br_slave_if=bond${i}
   install_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}
+  :
 done
