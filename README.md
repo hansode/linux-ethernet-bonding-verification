@@ -63,9 +63,12 @@ $ sudo ifenslave    bond0 eth2
 References
 ----------
 
-+ https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/sec-Using_Channel_Bonding.html
-+ https://community.oracle.com/thread/2546040
-+ http://tech.g.hatena.ne.jp/rx7/20101018/p1
-+ http://blog.tinola.com/?e=4
-+ https://github.com/torvalds/linux/tree/v2.6.32/drivers/net/bonding
-+ https://github.com/torvalds/linux/tree/v2.6.32/net/8021q
++ Bonding
+   + https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/sec-Using_Channel_Bonding.html
+   + https://community.oracle.com/thread/2546040
+   + http://tech.g.hatena.ne.jp/rx7/20101018/p1
+   + http://blog.tinola.com/?e=4
++ Linux v2.6.32
+   + https://github.com/torvalds/linux/tree/v2.6.32/net/bridge
+   + https://github.com/torvalds/linux/tree/v2.6.32/net/8021q
+   + https://github.com/torvalds/linux/tree/v2.6.32/drivers/net/bonding
