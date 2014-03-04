@@ -42,6 +42,7 @@ function install_bonding_conf() {
 
 function render_ifcfg_bond_master() {
   local ifname=${1:-bond0}
+  shift; eval local "${@}"
 
   cat <<-EOS
 	DEVICE=${ifname}
@@ -66,8 +67,9 @@ function render_ifcfg_bond_slave() {
 
 function install_ifcfg_bond_master() {
   local ifname=${1:-bond0}
+  shift; eval local "${@}"
 
-  render_ifcfg_bond_master ${ifname} | install_ifcfg_file ${ifname}
+  render_ifcfg_bond_master ${ifname} mode=${mode} | install_ifcfg_file ${ifname}
 }
 
 function install_ifcfg_bond_slave() {
@@ -82,7 +84,7 @@ function install_ifcfg_bond_map() {
   shift; eval local "${@}"
 
   install_bonding_conf      ${ifname}
-  install_ifcfg_bond_master ${ifname}
+  install_ifcfg_bond_master ${ifname} mode=${mode}
   install_ifcfg_bond_slave  ${slave}  master=${ifname}
 }
 
@@ -163,21 +165,20 @@ function install_ifcfg_vlan_map() {
 
 #
 
-mode=1
+bonding_mode=1
 
-install_ifcfg_bond_map bond0 slave=eth1
-install_ifcfg_bond_map bond0 slave=eth2
-install_ifcfg_bond_map bond1 slave=eth3
-install_ifcfg_bond_map bond1 slave=eth4
-install_ifcfg_bond_map bond2 slave=eth5
-install_ifcfg_bond_map bond2 slave=eth6
+for i in {0..5}; do
+  ifindex=$((${i} + 1))
+  install_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode}
+done
 
 configure_vlan_networking
 
-install_ifcfg_vlan_map vlan2000 physdev=bond0
-install_ifcfg_vlan_map vlan2001 physdev=bond1
-install_ifcfg_vlan_map vlan2002 physdev=bond2
+for i in {0..2}; do
+  vlan_if=vlan200${i}
+  install_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
 
-install_ifcfg_bridge_map br0 slave=vlan2000
-install_ifcfg_bridge_map br1 slave=vlan2001
-install_ifcfg_bridge_map br2 slave=vlan2002
+  br_master_if=br${i}; br_slave_if=${vlan_if}
+  install_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}
+  :
+done

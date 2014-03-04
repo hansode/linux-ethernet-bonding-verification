@@ -7,9 +7,24 @@ set -e
 set -o pipefail
 set -x
 
-mode=1
+# functions
 
-## functions
+## common
+
+function gen_ifcfg_path() {
+  local ifname=${1:-eth0}
+  local ifcfg_path=/etc/sysconfig/network-scripts/ifcfg
+
+  echo ${ifcfg_path}-${ifname}
+}
+
+function install_ifcfg_file() {
+  local ifname=${1:-eth0}
+
+  tee $(gen_ifcfg_path ${ifname}) </dev/stdin
+}
+
+## driver/bonding
 
 function install_bonding_conf() {
   local ifname=${1:-bond0}
@@ -25,54 +40,43 @@ function install_bonding_conf() {
   }
 }
 
-function gen_ifcfg_path() {
-  local device=${1:-eth0}
-  local ifcfg_path=/etc/sysconfig/network-scripts/ifcfg
-
-  echo ${ifcfg_path}-${device}
-}
-
 function render_ifcfg_bond_master() {
   local ifname=${1:-bond0}
+  shift; eval local "${@}"
 
   cat <<-EOS
 	DEVICE=${ifname}
 	ONBOOT=yes
 	BOOTPROTO=none
-	BONDING_OPTS="mode=${mode:-1} miimon=${miimon:-100} updelay=${updelay:-500} fail_over_mac=1"
+	BONDING_OPTS="mode=${mode:-1} miimon=${miimon:-100} updelay=${updelay:-500} fail_over_mac=${fail_over_mac:-1}"
 	EOS
 }
 
 function render_ifcfg_bond_slave() {
-  local ifname=${1:-bond0}
+  local ifname=${1:-eth0}
   shift; eval local "${@}"
 
   cat <<-EOS
-	DEVICE=${slave}
+	DEVICE=${ifname}
 	BOOTPROTO=none
 	ONBOOT=yes
-	MASTER=${ifname}
+	MASTER=${master}
 	SLAVE=yes
 	EOS
 }
 
-function install_ifcfg_file() {
-  local ifname=${1:-eth0}
-
-  tee $(gen_ifcfg_path ${ifname}) </dev/stdin
-}
-
 function install_ifcfg_bond_master() {
-  local ifname=${1:-bond0}
-
-  render_ifcfg_bond_master ${ifname} | install_ifcfg_file ${ifname}
-}
-
-function install_ifcfg_bond_slave() {
   local ifname=${1:-bond0}
   shift; eval local "${@}"
 
-  render_ifcfg_bond_slave ${ifname} slave=${slave} | install_ifcfg_file ${slave}
+  render_ifcfg_bond_master ${ifname} mode=${mode} | install_ifcfg_file ${ifname}
+}
+
+function install_ifcfg_bond_slave() {
+  local ifname=${1:-eth0}
+  shift; eval local "${@}"
+
+  render_ifcfg_bond_slave ${ifname} master=${master} | install_ifcfg_file ${ifname}
 }
 
 function install_ifcfg_bond_map() {
@@ -80,9 +84,11 @@ function install_ifcfg_bond_map() {
   shift; eval local "${@}"
 
   install_bonding_conf      ${ifname}
-  install_ifcfg_bond_master ${ifname}
-  install_ifcfg_bond_slave  ${ifname} slave=${slave}
+  install_ifcfg_bond_master ${ifname} mode=${mode}
+  install_ifcfg_bond_slave  ${slave}  master=${ifname}
 }
+
+## net/bridge
 
 function render_ifcfg_bridge() {
   local ifname=${1:-br0}
@@ -112,21 +118,67 @@ function install_ifcfg_bridge_map() {
   }
 }
 
-## bond0: eth1,eth2
-## bond1: eth3,eth4
-## bond2: eth5,eth6
+## net/8021q
 
-install_ifcfg_bond_map bond0 slave=eth1
-install_ifcfg_bond_map bond0 slave=eth2
-install_ifcfg_bond_map bond1 slave=eth3
-install_ifcfg_bond_map bond1 slave=eth4
-install_ifcfg_bond_map bond2 slave=eth5
-install_ifcfg_bond_map bond2 slave=eth6
+function configure_vlan_networking() {
+  local line
 
-install_ifcfg_bridge_map br0 slave=bond0
-install_ifcfg_bridge_map br1 slave=bond1
-install_ifcfg_bridge_map br2 slave=bond2
+  local network_conf_path=/etc/sysconfig/network
+  while read line; do
+    set ${line}
+    if ! egrep -q -w "^${line}" ${network_conf_path}; then
+      echo ${line} >> ${network_conf_path}
+    fi
+  done < <(cat <<-EOS
+	VLAN=yes
+	VLAN_NAME_TYPE=VLAN_PLUS_VID_NO_PAD
+	EOS
+  )
+}
 
-##
+function render_ifcfg_vlan() {
+  local ifname=${1:-vlan1000}
 
-# /etc/init.d/network restart
+  cat <<-EOS
+	DEVICE=${ifname}
+	BOOTPROTO=none
+	ONBOOT=yes
+	EOS
+}
+
+function install_ifcfg_vlan_map() {
+  local ifname=${1:-vlan1000}
+  shift; eval local "${@}"
+
+  render_ifcfg_vlan ${ifname} | install_ifcfg_file ${ifname}
+
+  local physdev_ifcfg_path=$(gen_ifcfg_path ${ifname})
+  if [[ ! -f ${physdev_ifcfg_path} ]]; then
+    : > ${physdev_ifcfg_path}
+  fi
+
+  local physdev_entry="PHYSDEV=${physdev}"
+  egrep -q -w "^${physdev_entry}" ${physdev_ifcfg_path} || {
+    echo ${physdev_entry} >> ${physdev_ifcfg_path}
+  }
+}
+
+#
+
+bonding_mode=1
+
+for i in {0..5}; do
+  ifindex=$((${i} + 1))
+  install_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode}
+done
+
+#configure_vlan_networking
+
+for i in {0..2}; do
+ #vlan_if=vlan200${i}
+ #install_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
+
+  br_master_if=br${i}; br_slave_if=bond${i}
+  install_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}
+  :
+done
