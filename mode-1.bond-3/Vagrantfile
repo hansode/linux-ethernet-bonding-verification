@@ -6,88 +6,41 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "centos-6.4-x86_64"
+  nic_num = 3 * 2
 
   config.vm.provider :virtualbox do |v, override|
    # Disable the base shared folder, guest additions are unavailable.
    #override.vm.synced_folder ".", "/vagrant", disabled: true
-   #v.gui = true
-   #v.customize ["modifyvm", :id, "--memory", "1024"]
 
-    # bond0: eth1, eth2
-    v.customize ["modifyvm", :id, "--nic2",   "intnet"]
-    v.customize ["modifyvm", :id, "--nic3",   "intnet"]
-    v.customize ["modifyvm", :id, "--intnet2", "bond0"]
-    v.customize ["modifyvm", :id, "--intnet3", "bond0"]
-    # bond1: eth3, eth4
-    v.customize ["modifyvm", :id, "--nic4",   "intnet"]
-    v.customize ["modifyvm", :id, "--nic5",   "intnet"]
-    v.customize ["modifyvm", :id, "--intnet4", "bond1"]
-    v.customize ["modifyvm", :id, "--intnet5", "bond1"]
-    # bond2: eth5, eth6
-    v.customize ["modifyvm", :id, "--nic6",   "intnet"]
-    v.customize ["modifyvm", :id, "--nic7",   "intnet"]
-    v.customize ["modifyvm", :id, "--intnet6", "bond2"]
-    v.customize ["modifyvm", :id, "--intnet7", "bond2"]
+    # nic2 ... nicX
+    nic_num.times.each { |i|
+      ifindex = i + 2
+      v.customize ["modifyvm", :id, "--nic#{ifindex}",   "intnet"]
+      v.customize ["modifyvm", :id, "--intnet#{ifindex}", "bond#{i / 2}"]
+    }
   end
 
   config.vm.provider :vmware_workstation do |v, override|
     override.vm.synced_folder ".", "/vagrant", disabled: true
    #v.gui = true
-   #v.vmx["memsize"]  = "2048"
-   #v.vmx["numvcpus"] = "2"
 
-    # eth1
-    v.vmx["ethernet1.present"]        = "TRUE"
-    v.vmx["ethernet1.vnet"]           = "VMnet11"
-    v.vmx["ethernet1.connectionType"] = "custom"
-    v.vmx["ethernet1.virtualDev"]     = "e1000"
-    v.vmx["ethernet1.wakeOnPcktRcv"]  = "FALSE"
-    v.vmx["ethernet1.addressType"]    = "generated"
-    # eth2
-    v.vmx["ethernet2.present"]        = "TRUE"
-    v.vmx["ethernet2.vnet"]           = "VMnet11"
-    v.vmx["ethernet2.connectionType"] = "custom"
-    v.vmx["ethernet2.virtualDev"]     = "e1000"
-    v.vmx["ethernet2.wakeOnPcktRcv"]  = "FALSE"
-    v.vmx["ethernet2.addressType"]    = "generated"
-
-    # eth3
-    v.vmx["ethernet3.present"]        = "TRUE"
-    v.vmx["ethernet3.vnet"]           = "VMnet12"
-    v.vmx["ethernet3.connectionType"] = "custom"
-    v.vmx["ethernet3.virtualDev"]     = "e1000"
-    v.vmx["ethernet3.wakeOnPcktRcv"]  = "FALSE"
-    v.vmx["ethernet3.addressType"]    = "generated"
-    # eth4
-    v.vmx["ethernet4.present"]        = "TRUE"
-    v.vmx["ethernet4.vnet"]           = "VMnet12"
-    v.vmx["ethernet4.connectionType"] = "custom"
-    v.vmx["ethernet4.virtualDev"]     = "e1000"
-    v.vmx["ethernet4.wakeOnPcktRcv"]  = "FALSE"
-    v.vmx["ethernet4.addressType"]    = "generated"
-
-    # eth5
-    v.vmx["ethernet5.present"]        = "TRUE"
-    v.vmx["ethernet5.vnet"]           = "VMnet13"
-    v.vmx["ethernet5.connectionType"] = "custom"
-    v.vmx["ethernet5.virtualDev"]     = "e1000"
-    v.vmx["ethernet5.wakeOnPcktRcv"]  = "FALSE"
-    v.vmx["ethernet5.addressType"]    = "generated"
-    # eth6
-    v.vmx["ethernet6.present"]        = "TRUE"
-    v.vmx["ethernet6.vnet"]           = "VMnet13"
-    v.vmx["ethernet6.connectionType"] = "custom"
-    v.vmx["ethernet6.virtualDev"]     = "e1000"
-    v.vmx["ethernet6.wakeOnPcktRcv"]  = "FALSE"
-    v.vmx["ethernet6.addressType"]    = "generated"
+    # ethernet1 ... etehernetX
+    nic_num.times.each { |i|
+      ifindex = i + 1
+      v.vmx["ethernet#{ifindex}.present"]        = "TRUE"
+      v.vmx["ethernet#{ifindex}.vnet"]           = "VMnet1#{i / 2}"
+      v.vmx["ethernet#{ifindex}.connectionType"] = "custom"
+      v.vmx["ethernet#{ifindex}.virtualDev"]     = "e1000"
+      v.vmx["ethernet#{ifindex}.wakeOnPcktRcv"]  = "FALSE"
+      v.vmx["ethernet#{ifindex}.addressType"]    = "generated"
+    }
   end
 
   config.vm.provision "shell", path: "bootstrap.sh"     # Bootstrapping: package installation (phase:1)
   config.vm.provision "shell", path: "config.d/base.sh" # Configuration: node-common          (phase:2)
 
-  (1..2).each { |id|
-    name = sprintf("node%02d", id)
-
+  2.times.each { |i|
+    name = sprintf("node%02d", i + 1)
     config.vm.define "#{name}" do |node|
       node.vm.hostname = "#{name}"
       node.vm.provision "shell", path: "config.d/#{node.vm.hostname}.sh" # Configuration: node-specific (phase:2.5)
