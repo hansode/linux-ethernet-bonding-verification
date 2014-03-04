@@ -42,6 +42,7 @@ function install_bonding_conf() {
 
 function render_ifcfg_bond_master() {
   local ifname=${1:-bond0}
+  shift; eval local "${@}"
 
   cat <<-EOS
 	DEVICE=${ifname}
@@ -66,8 +67,9 @@ function render_ifcfg_bond_slave() {
 
 function install_ifcfg_bond_master() {
   local ifname=${1:-bond0}
+  shift; eval local "${@}"
 
-  render_ifcfg_bond_master ${ifname} | install_ifcfg_file ${ifname}
+  render_ifcfg_bond_master ${ifname} mode=${mode} | install_ifcfg_file ${ifname}
 }
 
 function install_ifcfg_bond_slave() {
@@ -82,7 +84,7 @@ function install_ifcfg_bond_map() {
   shift; eval local "${@}"
 
   install_bonding_conf      ${ifname}
-  install_ifcfg_bond_master ${ifname}
+  install_ifcfg_bond_master ${ifname} mode=${mode}
   install_ifcfg_bond_slave  ${slave}  master=${ifname}
 }
 
@@ -163,14 +165,14 @@ function install_ifcfg_vlan_map() {
 
 #
 
-mode=1
+bonding_mode=1
 
-install_ifcfg_bond_map bond0 slave=eth1
-install_ifcfg_bond_map bond0 slave=eth2
-install_ifcfg_bond_map bond1 slave=eth3
-install_ifcfg_bond_map bond1 slave=eth4
-install_ifcfg_bond_map bond2 slave=eth5
-install_ifcfg_bond_map bond2 slave=eth6
+install_ifcfg_bond_map bond0 slave=eth1 mode=${bonding_mode}
+install_ifcfg_bond_map bond0 slave=eth2 mode=${bonding_mode}
+install_ifcfg_bond_map bond1 slave=eth3 mode=${bonding_mode}
+install_ifcfg_bond_map bond1 slave=eth4 mode=${bonding_mode}
+install_ifcfg_bond_map bond2 slave=eth5 mode=${bonding_mode}
+install_ifcfg_bond_map bond2 slave=eth6 mode=${bonding_mode}
 
 configure_vlan_networking
 
