@@ -167,19 +167,14 @@ function install_ifcfg_vlan_map() {
 
 bonding_mode=1
 
-install_ifcfg_bond_map bond0 slave=eth1 mode=${bonding_mode}
-install_ifcfg_bond_map bond0 slave=eth2 mode=${bonding_mode}
-install_ifcfg_bond_map bond1 slave=eth3 mode=${bonding_mode}
-install_ifcfg_bond_map bond1 slave=eth4 mode=${bonding_mode}
-install_ifcfg_bond_map bond2 slave=eth5 mode=${bonding_mode}
-install_ifcfg_bond_map bond2 slave=eth6 mode=${bonding_mode}
+for i in {0..5}; do
+  ifindex=$((${i} + 1))
+  install_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode}
+done
 
 configure_vlan_networking
 
-install_ifcfg_vlan_map vlan2000 physdev=bond0
-install_ifcfg_vlan_map vlan2001 physdev=bond1
-install_ifcfg_vlan_map vlan2002 physdev=bond2
-
-install_ifcfg_bridge_map br0 slave=vlan2000
-install_ifcfg_bridge_map br1 slave=vlan2001
-install_ifcfg_bridge_map br2 slave=vlan2002
+for i in {0..2}; do
+  install_ifcfg_vlan_map vlan200${i} physdev=bond${i}
+  install_ifcfg_bridge_map br${i} slave=vlan200${i}
+done
