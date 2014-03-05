@@ -45,10 +45,12 @@ function render_ifcfg_bond_master() {
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 
   local bond_opts="mode=${mode:-1}"
-
-  [[ -z "${miimon}"        ]] || bond_opts="${bond_opts} miimon=${miimon}"
-  [[ -z "${updelay}"       ]] || bond_opts="${bond_opts} updelay=${updelay}"
-  [[ -z "${fail_over_mac}" ]] || bond_opts="${bond_opts} fail_over_mac=${fail_over_mac}"
+  local __param
+  for __param in miimon updelay fail_over_mac primary xmit_hash_policy; do
+    eval "
+      [[ -z "\$${__param}" ]] || bond_opts=\"\${bond_opts} \${__param}=\$${__param}\"
+    "
+  done
 
   cat <<-EOS
 	DEVICE=${ifname}
