@@ -1,5 +1,13 @@
 all:
 
+build: setup deploy
+
+deploy:
+	for i in mode-*/; do \
+	 echo $${i}; \
+	 [[ -d $${i} ]] || continue; \
+	 cp common.d/Vagrantfile $${i}/; \
+	done
 setup:
 	for i in mode-*/config.d; do \
 	 echo $${i}; \
