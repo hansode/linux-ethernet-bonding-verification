@@ -6,3 +6,4 @@ setup:
 	 [[ -d $${i} ]] || continue; \
 	 (cd $${i}; cat ./_base.*.sh > base.sh); \
 	done
+	git diff
