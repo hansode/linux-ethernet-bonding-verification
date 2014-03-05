@@ -8,6 +8,7 @@ deploy:
 	 [[ -d $${i} ]] || continue; \
 	 cp -p common.d/Vagrantfile $${i}/; \
 	 cp -p common.d/node*.sh $${i}/config.d/; \
+	 cp -p common.d/_base.common.sh $${i}/config.d/; \
 	done
 setup:
 	for i in mode-*/config.d; do \
