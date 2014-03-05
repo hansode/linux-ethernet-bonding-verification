@@ -4,8 +4,7 @@ bonding_mode=4
 
 for i in {0..5}; do
   ifindex=$((${i} + 1))
-  install_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode} \
-   xmit_hash_policy=layer2+3 miimon=100 updelay=500
+  install_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode}
 done
 
 configure_vlan_networking
