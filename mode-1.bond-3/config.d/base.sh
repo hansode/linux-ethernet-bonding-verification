@@ -42,19 +42,25 @@ function install_bonding_conf() {
 
 function render_ifcfg_bond_master() {
   local ifname=${1:-bond0}
-  shift; eval local "${@}"
+  shift; [[ ${#} == 0 ]] || eval local "${@}"
+
+  local bond_opts="mode=${mode:-1}"
+
+  [[ -z "${miimon}"        ]] || bond_opts="${bond_opts} miimon=${miimon}"
+  [[ -z "${updelay}"       ]] || bond_opts="${bond_opts} updelay=${updelay}"
+  [[ -z "${fail_over_mac}" ]] || bond_opts="${bond_opts} fail_over_mac=${fail_over_mac}"
 
   cat <<-EOS
 	DEVICE=${ifname}
 	ONBOOT=yes
 	BOOTPROTO=none
-	BONDING_OPTS="mode=${mode:-1} miimon=${miimon:-100} updelay=${updelay:-500} fail_over_mac=${fail_over_mac:-1}"
+	BONDING_OPTS="${bond_opts}"
 	EOS
 }
 
 function render_ifcfg_bond_slave() {
   local ifname=${1:-eth0}
-  shift; eval local "${@}"
+  shift; [[ ${#} == 0 ]] || eval local "${@}"
 
   cat <<-EOS
 	DEVICE=${ifname}
@@ -67,21 +73,21 @@ function render_ifcfg_bond_slave() {
 
 function install_ifcfg_bond_master() {
   local ifname=${1:-bond0}
-  shift; eval local "${@}"
+  shift; [[ ${#} == 0 ]] || eval local "${@}"
 
   render_ifcfg_bond_master ${ifname} mode=${mode} | install_ifcfg_file ${ifname}
 }
 
 function install_ifcfg_bond_slave() {
   local ifname=${1:-eth0}
-  shift; eval local "${@}"
+  shift; [[ ${#} == 0 ]] || eval local "${@}"
 
   render_ifcfg_bond_slave ${ifname} master=${master} | install_ifcfg_file ${ifname}
 }
 
 function install_ifcfg_bond_map() {
   local ifname=${1:-bond0}
-  shift; eval local "${@}"
+  shift; [[ ${#} == 0 ]] || eval local "${@}"
 
   install_bonding_conf      ${ifname}
   install_ifcfg_bond_master ${ifname} mode=${mode}
@@ -103,7 +109,7 @@ function render_ifcfg_bridge() {
 
 function install_ifcfg_bridge_map() {
   local ifname=${1:-br0}
-  shift; eval local "${@}"
+  shift; [[ ${#} == 0 ]] || eval local "${@}"
 
   render_ifcfg_bridge ${ifname} | install_ifcfg_file ${ifname}
 
@@ -148,7 +154,7 @@ function render_ifcfg_vlan() {
 
 function install_ifcfg_vlan_map() {
   local ifname=${1:-vlan1000}
-  shift; eval local "${@}"
+  shift; [[ ${#} == 0 ]] || eval local "${@}"
 
   render_ifcfg_vlan ${ifname} | install_ifcfg_file ${ifname}
 
