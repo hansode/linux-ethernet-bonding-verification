@@ -6,7 +6,8 @@ deploy:
 	for i in mode-*/; do \
 	 echo $${i}; \
 	 [[ -d $${i} ]] || continue; \
-	 cp common.d/Vagrantfile $${i}/; \
+	 cp -p common.d/Vagrantfile $${i}/; \
+	 cp -p common.d/node*.sh $${i}/config.d/; \
 	done
 setup:
 	for i in mode-*/config.d; do \
