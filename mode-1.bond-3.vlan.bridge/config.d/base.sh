@@ -175,9 +175,16 @@ function install_ifcfg_vlan_map() {
 
 bonding_mode=1
 
+function gen_priimary() {
+  case "${1}" in
+    [01]) echo 1 ;; [23]) echo 3 ;; [45]) echo 5 ;;
+  esac
+}
+
 for i in {0..5}; do
   ifindex=$((${i} + 1))
-  install_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode}
+  install_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode} \
+   primary=eth$(gen_priimary ${i}) miimon=100 updelay=10000
 done
 
 configure_vlan_networking
