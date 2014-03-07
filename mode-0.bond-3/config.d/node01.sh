@@ -21,8 +21,8 @@ node=node01
 #node=node02
 
 case "${node}" in
-  node01) ip4=43 opposit_ip4=44 ;;
-  node02) ip4=44 opposit_ip4=43 ;;
+  node01) ip4=43 partner_ip4=44 ;;
+  node02) ip4=44 partner_ip4=43 ;;
 esac
 
 append_networking_param bond0 ip=10.126.5.${ip4} mask=255.255.255.0
@@ -37,8 +37,8 @@ append_networking_param bond2 ip=10.126.7.${ip4} mask=255.255.255.0
 
 case "${node}" in
   node02)
-    ping -c 1 -W 3 10.126.5.${opposit_ip4}
-    ping -c 1 -W 3 10.126.6.${opposit_ip4}
-    ping -c 1 -W 3 10.126.7.${opposit_ip4}
+    ping -c 1 -W 3 10.126.5.${partner_ip4}
+    ping -c 1 -W 3 10.126.6.${partner_ip4}
+    ping -c 1 -W 3 10.126.7.${partner_ip4}
     ;;
 esac
