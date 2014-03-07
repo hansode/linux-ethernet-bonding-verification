@@ -10,15 +10,15 @@ System Requirements
 Bonding Modes
 -------------
 
-| # | keyword       |
-|:--|:--------------|
-| 0 | balance-rr    |
-| 1 | active-backup |
-| 2 | balance-xor   |
-| 3 | broadcast     |
-| 4 | 802.3ad       |
-| 5 | balance-tlb   |
-| 6 | balance-alb   |
+| # | modename      | mode                   |
+|:--|:--------------|:-----------------------|
+| 0 | balance-rr    | BOND_MODE_ROUNDROBIN   |
+| 1 | active-backup | BOND_MODE_ACTIVEBACKUP |
+| 2 | balance-xor   | BOND_MODE_XOR          |
+| 3 | broadcast     | BOND_MODE_BROADCAST    |
+| 4 | 802.3ad       | BOND_MODE_8023AD       |
+| 5 | balance-tlb   | BOND_MODE_TLB          |
+| 6 | balance-alb   | BOND_MODE_ALB          |
 
 Module Parameters
 -----------------
