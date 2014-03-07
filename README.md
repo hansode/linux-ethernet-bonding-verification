@@ -42,6 +42,24 @@ Module Parameters
 | arp_validate     | 0       | validate src/dst of ARP probes: none (default), active, backup or all                       |
 | fail_over_mac    | 0       | For active-backup, do not set all slaves to the same MAC.  none (default), active or follow |
 
+| name \ mode      | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|:-----------------|:--|:--|:--|:--|:--|:--|:--|
+| max_bonds        | o | o | o | o | o | o | o |
+| num_grat_arp     |   | o |   |   |   |   |   |
+| num_unsol_na     |   | o |   |   |   |   |   |
+| miimon           | o | o | o | o | o | o | o |
+| updelay          | o | o | o | o | o | o | o |
+| downdelay        | o | o | o | o | o | o | o |
+| use_carrier      | o | o | o | o | o | o | o |
+| primary          | o | o | o | o | o | o | o |
+| lacp_rate        |   |   |   |   | o |   |   |
+| ad_select        |   |   |   |   | o |   |   |
+| xmit_hash_policy |   |   | o |   | o |   |   |
+| arp_interval     | o | o | o | o | o | o | o |
+| arp_ip_target    | o | o | o | o | o | o | o |
+| arp_validate     | o | o | o | o | o | o | o |
+| fail_over_mac    |   | o |   |   |   |   |   |
+
 Show the bonding module information
 -----------------------------------
 
