@@ -45,8 +45,26 @@ function render_ifcfg_bond_master() {
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 
   local bond_opts="mode=${mode:-1}"
+  local bond_params="
+    max_bonds
+    num_grat_arp
+    num_unsol_na
+    miimon
+    updelay
+    downdelay
+    use_carrier
+    primary
+    lacp_rate
+    ad_select
+    xmit_hash_policy
+    arp_interval
+    arp_ip_target
+    arp_validate
+    fail_over_mac
+  "
+
   local __param
-  for __param in miimon updelay fail_over_mac primary xmit_hash_policy; do
+  for __param in ${bond_params}; do
     eval "
       [[ -z "\$${__param}" ]] || bond_opts=\"\${bond_opts} \${__param}=\$${__param}\"
     "

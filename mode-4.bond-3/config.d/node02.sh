@@ -31,6 +31,12 @@ append_networking_param bond2 ip=10.126.7.${ip4} mask=255.255.255.0
 
 ##
 
+cat /proc/sys/kernel/printk
+echo "7 7 7 7" > /proc/sys/kernel/printk
+cat /proc/sys/kernel/printk
+
+##
+
 /etc/init.d/network restart
 
 ##
