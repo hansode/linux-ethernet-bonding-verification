@@ -10,16 +10,37 @@ System Requirements
 Bonding Modes
 -------------
 
-| # | keyword       |
-|:--|:--------------|
-| 0 | balance-rr    |
-| 1 | active-backup |
-| 2 | balance-xor   |
-| 3 | broadcast     |
-| 4 | 802.3ad       |
-| 5 | balance-tlb   |
-| 6 | balance-alb   |
+| # | modename      | mode                   | description                           |
+|:--|:--------------|:-----------------------|---------------------------------------|
+| 0 | balance-rr    | BOND_MODE_ROUNDROBIN   | load balancing (round-robin)          |
+| 1 | active-backup | BOND_MODE_ACTIVEBACKUP | fault-tolerance (active-backup)       |
+| 2 | balance-xor   | BOND_MODE_XOR          | load balancing (xor)                  |
+| 3 | broadcast     | BOND_MODE_BROADCAST    | fault-tolerance (broadcast)           |
+| 4 | 802.3ad       | BOND_MODE_8023AD       | IEEE 802.3ad Dynamic link aggregation |
+| 5 | balance-tlb   | BOND_MODE_TLB          | transmit load balancing               |
+| 6 | balance-alb   | BOND_MODE_ALB          | adaptive load balancing               |
 
+Module Parameters
+-----------------
+
+| name             | default | description                                                                                 |
+|:-----------------|:--------|:--------------------------------------------------------------------------------------------|
+| max_bonds        | 0       | Max number of bonded devices                                                                |
+| num_grat_arp     | 0644    | Number of gratuitous ARP packets to send on failover event                                  |
+| num_unsol_na     | 0644    | Number of unsolicited IPv6 Neighbor Advertisements packets to send on failover event        |
+| miimon           | 0       | Link check interval in milliseconds                                                         |
+| updelay          | 0       | Delay before considering link up, in milliseconds                                           |
+| downdelay        | 0       | Delay before considering link down, in milliseconds                                         |
+| use_carrier      | 0       | Use netif_carrier_ok (vs MII ioctls) in miimon; 0 for off, 1 for on (default)               |
+| mode             | 0       | Mode of operation                                                                           |
+| primary          | 0       | Primary network device to use                                                               |
+| lacp_rate        | 0       | Primary network device to use                                                               |
+| ad_select        | 0       | 803.ad aggregation selection logic: stable (0, default), bandwidth (1), count (2)           |
+| xmit_hash_policy | 0       | XOR hashing method: 0 for layer 2 (default), 1 for layer 3+4                                |
+| arp_interval     | 0       | arp interval in milliseconds                                                                |
+| arp_ip_target    | NULL    | arp targets in n.n.n.n form                                                                 |
+| arp_validate     | 0       | validate src/dst of ARP probes: none (default), active, backup or all                       |
+| fail_over_mac    | 0       | For active-backup, do not set all slaves to the same MAC.  none (default), active or follow |
 
 Show the bonding module information
 -----------------------------------
