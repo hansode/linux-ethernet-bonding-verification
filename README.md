@@ -1,5 +1,5 @@
-Linux Ethernet Bonding Testing
-==============================
+Linux Ethernet Bonding Verification
+===================================
 
 System Requirements
 -------------------
