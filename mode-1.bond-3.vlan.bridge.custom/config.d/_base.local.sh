@@ -14,7 +14,7 @@ for i in {0..5}; do
    primary=eth$(gen_priimary ${i}) miimon=100 updelay=10000
 done
 
-configure_vlan_networking
+configure_vlan_conf
 
 for i in {0..2}; do
   vlan_if=vlan200${i}

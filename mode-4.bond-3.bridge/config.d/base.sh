@@ -146,7 +146,7 @@ function configure_ifcfg_bridge_map() {
 
 ## net/8021q
 
-function configure_vlan_networking() {
+function configure_vlan_conf() {
   local line
 
   local network_conf_path=/etc/sysconfig/network
@@ -198,7 +198,7 @@ for i in {0..5}; do
   configure_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode}
 done
 
-#configure_vlan_networking
+#configure_vlan_conf
 
 for i in {0..2}; do
  #vlan_if=vlan200${i}

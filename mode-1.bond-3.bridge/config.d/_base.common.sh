@@ -146,7 +146,7 @@ function configure_ifcfg_bridge_map() {
 
 ## net/8021q
 
-function configure_vlan_networking() {
+function configure_vlan_conf() {
   local line
 
   local network_conf_path=/etc/sysconfig/network

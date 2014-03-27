@@ -146,7 +146,7 @@ function configure_ifcfg_bridge_map() {
 
 ## net/8021q
 
-function configure_vlan_networking() {
+function configure_vlan_conf() {
   local line
 
   local network_conf_path=/etc/sysconfig/network
@@ -205,7 +205,7 @@ for i in {0..5}; do
    primary=eth$(gen_priimary ${i}) miimon=100 updelay=10000
 done
 
-configure_vlan_networking
+configure_vlan_conf
 
 for i in {0..2}; do
   vlan_if=vlan200${i}
