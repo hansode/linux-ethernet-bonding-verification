@@ -14,6 +14,6 @@ for i in {0..2}; do
  #configure_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
 
   br_master_if=br${i}; br_slave_if=bond${i}
-  configure_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}
+  map_ifcfg_bridge ${br_master_if} slave=${br_slave_if}
   :
 done

@@ -127,7 +127,7 @@ function render_ifcfg_bridge() {
 	EOS
 }
 
-function configure_ifcfg_bridge_map() {
+function map_ifcfg_bridge() {
   local ifname=${1:-br0}
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 
@@ -205,6 +205,6 @@ for i in {0..2}; do
   configure_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
 
   br_master_if=br${i}; br_slave_if=${vlan_if}
-  configure_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}
+  map_ifcfg_bridge ${br_master_if} slave=${br_slave_if}
   :
 done

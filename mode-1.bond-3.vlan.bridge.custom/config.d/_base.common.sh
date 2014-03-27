@@ -105,7 +105,7 @@ function install_ifcfg_bond_slave() {
   render_ifcfg_bond_slave ${ifname} master=${master} | install_ifcfg_file ${ifname}
 }
 
-function configure_ifcfg_bond_map() {
+function map_ifcfg_bond() {
   local ifname=${1:-bond0}
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 
@@ -127,7 +127,7 @@ function render_ifcfg_bridge() {
 	EOS
 }
 
-function configure_ifcfg_bridge_map() {
+function map_ifcfg_bridge() {
   local ifname=${1:-br0}
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 
@@ -172,7 +172,7 @@ function render_ifcfg_vlan() {
 	EOS
 }
 
-function configure_ifcfg_vlan_map() {
+function map_ifcfg_vlan() {
   local ifname=${1:-vlan1000}
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 
