@@ -105,7 +105,7 @@ function install_ifcfg_bond_slave() {
   render_ifcfg_bond_slave ${ifname} master=${master} | install_ifcfg_file ${ifname}
 }
 
-function install_ifcfg_bond_map() {
+function configure_ifcfg_bond_map() {
   local ifname=${1:-bond0}
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 
@@ -127,7 +127,7 @@ function render_ifcfg_bridge() {
 	EOS
 }
 
-function install_ifcfg_bridge_map() {
+function configure_ifcfg_bridge_map() {
   local ifname=${1:-br0}
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 

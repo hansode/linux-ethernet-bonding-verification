@@ -10,7 +10,7 @@ function gen_priimary() {
 
 for i in {0..5}; do
   ifindex=$((${i} + 1))
-  install_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode} \
+  configure_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode} \
    primary=eth$(gen_priimary ${i}) miimon=100 updelay=10000
 done
 
@@ -21,6 +21,6 @@ for i in {0..2}; do
   install_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
 
   br_master_if=br${i}; br_slave_if=${vlan_if}
-  install_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}
+  configure_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}
   :
 done

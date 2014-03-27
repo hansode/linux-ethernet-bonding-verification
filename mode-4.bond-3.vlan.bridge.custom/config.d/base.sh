@@ -105,7 +105,7 @@ function install_ifcfg_bond_slave() {
   render_ifcfg_bond_slave ${ifname} master=${master} | install_ifcfg_file ${ifname}
 }
 
-function install_ifcfg_bond_map() {
+function configure_ifcfg_bond_map() {
   local ifname=${1:-bond0}
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 
@@ -127,7 +127,7 @@ function render_ifcfg_bridge() {
 	EOS
 }
 
-function install_ifcfg_bridge_map() {
+function configure_ifcfg_bridge_map() {
   local ifname=${1:-br0}
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 
@@ -195,7 +195,7 @@ bonding_mode=4
 
 for i in {0..5}; do
   ifindex=$((${i} + 1))
-  install_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode} \
+  configure_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode} \
    xmit_hash_policy=layer2+3 miimon=100 updelay=500
 done
 
@@ -206,6 +206,6 @@ for i in {0..2}; do
   install_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
 
   br_master_if=br${i}; br_slave_if=${vlan_if}
-  install_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}
+  configure_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}
   :
 done
