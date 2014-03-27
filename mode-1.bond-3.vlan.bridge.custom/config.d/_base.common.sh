@@ -172,7 +172,7 @@ function render_ifcfg_vlan() {
 	EOS
 }
 
-function install_ifcfg_vlan_map() {
+function configure_ifcfg_vlan_map() {
   local ifname=${1:-vlan1000}
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 

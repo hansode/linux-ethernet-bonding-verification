@@ -172,7 +172,7 @@ function render_ifcfg_vlan() {
 	EOS
 }
 
-function install_ifcfg_vlan_map() {
+function configure_ifcfg_vlan_map() {
   local ifname=${1:-vlan1000}
   shift; [[ ${#} == 0 ]] || eval local "${@}"
 
@@ -202,7 +202,7 @@ done
 
 for i in {0..2}; do
  #vlan_if=vlan200${i}
- #install_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
+ #configure_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
 
   br_master_if=br${i}; br_slave_if=bond${i}
   configure_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}

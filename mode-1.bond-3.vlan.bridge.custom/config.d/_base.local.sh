@@ -18,7 +18,7 @@ configure_vlan_networking
 
 for i in {0..2}; do
   vlan_if=vlan200${i}
-  install_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
+  configure_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
 
   br_master_if=br${i}; br_slave_if=${vlan_if}
   configure_ifcfg_bridge_map ${br_master_if} slave=${br_slave_if}
