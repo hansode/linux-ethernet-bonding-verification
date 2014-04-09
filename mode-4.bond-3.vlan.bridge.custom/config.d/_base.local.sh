@@ -4,7 +4,7 @@ bonding_mode=4
 
 for i in {0..5}; do
   ifindex=$((${i} + 1))
-  configure_ifcfg_bond_map bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode} \
+  map_ifcfg_bond bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode} \
    xmit_hash_policy=layer2+3 miimon=100 updelay=500
 done
 
@@ -12,7 +12,7 @@ configure_vlan_conf
 
 for i in {0..2}; do
   vlan_if=vlan200${i}
-  configure_ifcfg_vlan_map ${vlan_if} physdev=bond${i}
+  map_ifcfg_vlan ${vlan_if} physdev=bond${i}
 
   br_master_if=br${i}; br_slave_if=${vlan_if}
   map_ifcfg_bridge ${br_master_if} slave=${br_slave_if}
