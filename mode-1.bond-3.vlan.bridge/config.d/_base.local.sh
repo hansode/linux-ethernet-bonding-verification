@@ -7,8 +7,6 @@ for i in {0..5}; do
   map_ifcfg_bond bond$((${i} / 2)) slave=eth${ifindex} mode=${bonding_mode}
 done
 
-configure_vlan_conf
-
 for i in {0..2}; do
   vlan_if=vlan200${i}
   map_ifcfg_vlan ${vlan_if} physdev=bond${i}

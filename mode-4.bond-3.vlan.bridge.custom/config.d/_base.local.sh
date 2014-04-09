@@ -8,8 +8,6 @@ for i in {0..5}; do
    xmit_hash_policy=layer2+3 miimon=100 updelay=500
 done
 
-configure_vlan_conf
-
 for i in {0..2}; do
   vlan_if=vlan200${i}
   map_ifcfg_vlan ${vlan_if} physdev=bond${i}
