@@ -17,10 +17,7 @@ function append_networking_param() {
 	EOS
 }
 
-#node=node01
-node=node02
-
-case "${node}" in
+case "$(hostname)" in
   node01) ip4=43 partner_ip4=44 ;;
   node02) ip4=44 partner_ip4=43 ;;
 esac
@@ -41,7 +38,7 @@ cat /proc/sys/kernel/printk
 
 ##
 
-case "${node}" in
+case "$(hostname)" in
   node02)
     ping -c 1 -W 3 10.126.5.${partner_ip4}
     ping -c 1 -W 3 10.126.6.${partner_ip4}
